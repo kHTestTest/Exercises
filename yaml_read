@@ -5,6 +5,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 //主函数
@@ -18,59 +19,34 @@ func main() {
 	if err != nil {
 		fmt.Printf("Unmarshal: %v\n", err)
 	}
-	//通过访问结构体成员获取yaml文件中对应的key-value
-	//fmt.Println(reflect.TypeOf(conf.Animals))
-	//fmt.Println(conf.Animals)
 	ProcessCmd(os.Args, conf.Animals)
 }
 
 // 获取命令行参数并解析
 func ProcessCmd(ArgsLists []string, S []struct { Name string "yaml:\"name\""; Type string "yaml:\"type\"" }) {
 	IsExists := 0
+	IsUpper := 0
+	if os.Getenv("SHOUT") == "True"{
+		IsUpper = 1
+	}
 	for i:= 0; i < len(S); i++ {
-		if S[i].Name == ArgsLists[1] {
+		if S[i].Name == ArgsLists[1]{
 			IsExists = 1
-			if S[i].Type == "cow"{
-				if ArgsLists[2] == "eat" {
-					fmt.Println(S[i].Name, ArgsLists[2], "grass")
-				}
-				if ArgsLists[2] == "move" {
-					fmt.Println(S[i].Name, ArgsLists[2], "walk")
-				}
-				if ArgsLists[2] == "speak" {
-					fmt.Println(S[i].Name, ArgsLists[2], "moo")
-				}
+			var res string
+			if IsUpper == 0 {
+				res = fmt.Sprintf("%s", AnimalsBehave[S[i].Type][ArgsLists[2]])
 			}
-			if S[i].Type == "bird" {
-				if ArgsLists[2] == "eat" {
-					fmt.Println(S[i].Name, ArgsLists[2], "worms")
-				}
-				if ArgsLists[2] == "move" {
-					fmt.Println(S[i].Name, ArgsLists[2], "fly")
-				}
-				if ArgsLists[2] == "speak" {
-					fmt.Println(S[i].Name, ArgsLists[2], "peep")
-				}
+			if IsUpper == 1{
+				res = fmt.Sprintf("%s", strings.ToUpper(AnimalsBehave[S[i].Type][ArgsLists[2]]))
 			}
-			if S[i].Type == "snake" {
-				if ArgsLists[2] == "eat" {
-					fmt.Println(S[i].Name, ArgsLists[2], "mice")
-				}
-				if ArgsLists[2] == "move" {
-					fmt.Println(S[i].Name, ArgsLists[2], "slither")
-				}
-				if ArgsLists[2] == "speak" {
-					fmt.Println(S[i].Name, ArgsLists[2], "hsss")
-				}
-			}
+			fmt.Println(res)
 		}else {
-			if i == len(S) -1 &&  IsExists == 0 {
+			if i == len(S) - 1 &&  IsExists == 0 {
 				var res string
 				res = ArgsLists[1] + " not exists"
 				fmt.Println(res)
 			}
 		}
-
 	}
 }
 
@@ -80,4 +56,15 @@ type Yaml struct {
 		Name string `yaml:"name"`
 		Type string `yaml:"type"`
 	}
+}
+
+var AnimalsBehave = map[string]map[string]string{
+	"cow": map[string]string{
+		"eat": "grass",
+		"move": "walk",
+		"speak": "moo"},
+	"snake": map[string]string{
+		"eat": "mice", "move": "slither", "speak":"hsss"},
+	"bird":map[string]string{
+		"eat": "worms","move": "fly","speak":"peeps"},
 }
