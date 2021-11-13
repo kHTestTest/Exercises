@@ -20,13 +20,16 @@ func main() {
 	}
 	//通过访问结构体成员获取yaml文件中对应的key-value
 	//fmt.Println(reflect.TypeOf(conf.Animals))
+	//fmt.Println(conf.Animals)
 	ProcessCmd(os.Args, conf.Animals)
 }
 
 // 获取命令行参数并解析
 func ProcessCmd(ArgsLists []string, S []struct { Name string "yaml:\"name\""; Type string "yaml:\"type\"" }) {
+	IsExists := 0
 	for i:= 0; i < len(S); i++ {
 		if S[i].Name == ArgsLists[1] {
+			IsExists = 1
 			if S[i].Type == "cow"{
 				if ArgsLists[2] == "eat" {
 					fmt.Println(S[i].Name, ArgsLists[2], "grass")
@@ -60,7 +63,14 @@ func ProcessCmd(ArgsLists []string, S []struct { Name string "yaml:\"name\""; Ty
 					fmt.Println(S[i].Name, ArgsLists[2], "hsss")
 				}
 			}
+		}else {
+			if i == len(S) -1 &&  IsExists == 0 {
+				var res string
+				res = ArgsLists[1] + " not exists"
+				fmt.Println(res)
+			}
 		}
+
 	}
 }
 
