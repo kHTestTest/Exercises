@@ -1,0 +1,51 @@
+package main
+
+import (
+	"fmt"
+	yaml "gopkg.in/yaml.v2"
+	"io/ioutil"
+	"os"
+	"reflect"
+)
+
+//主函数
+func main() {
+	conf := new(Yaml)
+	yamlFile, err := ioutil.ReadFile("config.yaml")
+	if err != nil {
+		fmt.Printf("yamlFile.Get err #%v ", err)
+	}
+	err = yaml.Unmarshal(yamlFile, &conf)
+	// err = yaml.Unmarshal(yamlFile, &resultMap)
+	if err != nil {
+		fmt.Printf("Unmarshal: %v\n", err)
+	}
+	//通过访问结构体成员获取yaml文件中对应的key-value
+	fmt.Println(reflect.TypeOf(conf.Animals))
+	fmt.Println(conf.Animals)
+	ProcessCmd(os.Args, conf.Animals)
+}
+
+// 获取命令行参数并解析
+func ProcessCmd(ArgsLists []string, S []struct { Name string "yaml:\"name\""; Type string "yaml:\"type\"" }) {
+	for i:= 0; i < len(S); i++ {
+		if S[i].Name == ArgsLists[1] {
+			if S[i].Type == "cow"{
+				fmt.Println(S[i].Name, S[i].Type)
+			}
+			if S[i].Type == "bird" {
+				fmt.Println(S[i].Name, S[i].Type)
+			}
+			if S[i].Type == "snake" {
+				fmt.Println(S[i].Name, S[i].Type)
+			}
+		}
+	}
+}
+
+//yaml文件内容映射的结构体
+type Yaml struct {
+	Animals []struct {
+		Name string `yaml:"name"`
+		Type string `yaml:"type"`
+	}
