@@ -5,7 +5,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
-	"reflect"
 )
 
 //主函数
@@ -16,13 +15,11 @@ func main() {
 		fmt.Printf("yamlFile.Get err #%v ", err)
 	}
 	err = yaml.Unmarshal(yamlFile, &conf)
-	// err = yaml.Unmarshal(yamlFile, &resultMap)
 	if err != nil {
 		fmt.Printf("Unmarshal: %v\n", err)
 	}
 	//通过访问结构体成员获取yaml文件中对应的key-value
-	fmt.Println(reflect.TypeOf(conf.Animals))
-	fmt.Println(conf.Animals)
+	//fmt.Println(reflect.TypeOf(conf.Animals))
 	ProcessCmd(os.Args, conf.Animals)
 }
 
@@ -31,13 +28,37 @@ func ProcessCmd(ArgsLists []string, S []struct { Name string "yaml:\"name\""; Ty
 	for i:= 0; i < len(S); i++ {
 		if S[i].Name == ArgsLists[1] {
 			if S[i].Type == "cow"{
-				fmt.Println(S[i].Name, S[i].Type)
+				if ArgsLists[2] == "eat" {
+					fmt.Println(S[i].Name, ArgsLists[2], "grass")
+				}
+				if ArgsLists[2] == "move" {
+					fmt.Println(S[i].Name, ArgsLists[2], "walk")
+				}
+				if ArgsLists[2] == "speak" {
+					fmt.Println(S[i].Name, ArgsLists[2], "moo")
+				}
 			}
 			if S[i].Type == "bird" {
-				fmt.Println(S[i].Name, S[i].Type)
+				if ArgsLists[2] == "eat" {
+					fmt.Println(S[i].Name, ArgsLists[2], "worms")
+				}
+				if ArgsLists[2] == "move" {
+					fmt.Println(S[i].Name, ArgsLists[2], "fly")
+				}
+				if ArgsLists[2] == "speak" {
+					fmt.Println(S[i].Name, ArgsLists[2], "peep")
+				}
 			}
 			if S[i].Type == "snake" {
-				fmt.Println(S[i].Name, S[i].Type)
+				if ArgsLists[2] == "eat" {
+					fmt.Println(S[i].Name, ArgsLists[2], "mice")
+				}
+				if ArgsLists[2] == "move" {
+					fmt.Println(S[i].Name, ArgsLists[2], "slither")
+				}
+				if ArgsLists[2] == "speak" {
+					fmt.Println(S[i].Name, ArgsLists[2], "hsss")
+				}
 			}
 		}
 	}
@@ -49,3 +70,4 @@ type Yaml struct {
 		Name string `yaml:"name"`
 		Type string `yaml:"type"`
 	}
+}
